@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>English Quiz App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>English Practice Quiz</h1>
+
+        <input type="text" id="studentName" placeholder="Enter Full Name">
+
+        <select id="topic">
+            <option value="grammar">Grammar</option>
+            <option value="comprehension">Comprehension</option>
+        </select>
+
+        <button onclick="startQuiz()">Start Test</button>
+
+        <div id="quizSection" style="display:none;">
+            <p id="question"></p>
+            <div id="options"></div>
+            <p>Time Left: <span id="timer">30</span> seconds</p>
+            <button onclick="nextQuestion()">Next</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+<script src="script.js"></script>
+</body>
+</html>
