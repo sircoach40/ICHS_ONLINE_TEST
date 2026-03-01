@@ -1,91 +1,126 @@
 let questions = [
-    {
-        topic: "grammar",
-        question: "Choose the correct sentence:",
-        options: ["She go to school.", "She goes to school."],
-        answer: 1
-    },
-    {
-        topic: "comprehension",
-        question: "What is the synonym of 'Happy'?",
-        options: ["Sad", "Joyful"],
-        answer: 1
-    }
+{
+question: "What is 5 + 5?",
+options: ["8", "10", "12"],
+answer: "10"
+},
+{
+question: "Capital of France?",
+options: ["Paris", "London", "Berlin"],
+answer: "Paris"
+}
 ];
 
 let currentQuestion = 0;
 let score = 0;
-let selectedTopic = "";
-let timeLeft = 30;
-let timerInterval;
+let timeLeft = 60;
+let timer;
 
-function startQuiz() {
-    selectedTopic = document.getElementById("topic").value;
-    document.getElementById("quizSection").style.display = "block";
-    loadQuestion();
-    startTimer();
+function goToQuiz() {
+if (!document.getElementById("fullName").value) {
+alert("Please enter your details");
+return;
+}
+
+document.getElementById("page1").classList.remove("active");
+document.getElementById("page2").classList.add("active");
+
+startTimer();
+loadQuestion();
 }
 
 function loadQuestion() {
-    let filteredQuestions = questions.filter(q => q.topic === selectedTopic);
-    let q = filteredQuestions[currentQuestion];
+let q = questions[currentQuestion];
+let html = `<p>${q.question}</p>`;
 
-    document.getElementById("question").innerText = q.question;
-    let optionsHtml = "";
+q.options.forEach(option => {
+html += `
+<div class="option">
+<input type="radio" name="answer" value="${option}">
+${option}
+</div>`;
+});
 
-    q.options.forEach((option, index) => {
-        optionsHtml += `<button onclick="selectAnswer(${index})">${option}</button><br>`;
-    });
-
-    document.getElementById("options").innerHTML = optionsHtml;
+document.getElementById("questionBox").innerHTML = html;
 }
 
-function selectAnswer(index) {
-    let filteredQuestions = questions.filter(q => q.topic === selectedTopic);
-    if (index === filteredQuestions[currentQuestion].answer) {
-        score++;
-    }
+function submitQuiz() {
+let selected = document.querySelector('input[name="answer"]:checked');
+if (!selected) {
+alert("Select an answer");
+return;
 }
 
-function nextQuestion() {
-    currentQuestion++;
-    let filteredQuestions = questions.filter(q => q.topic === selectedTopic);
-
-    if (currentQuestion < filteredQuestions.length) {
-        loadQuestion();
-    } else {
-        showResult();
-    }
+if (selected.value === questions[currentQuestion].answer) {
+score++;
 }
 
-function showResult() {
-    clearInterval(timerInterval);
-    document.getElementById("quizSection").style.display = "none";
-    document.getElementById("result").innerText =
-        "Your Score: " + score;
+currentQuestion++;
 
-    saveToLocalStorage();
+if (currentQuestion < questions.length) {
+loadQuestion();
+} else {
+finishQuiz();
+}
+}
+
+function finishQuiz() {
+clearInterval(timer);
+
+document.getElementById("page2").classList.remove("active");
+document.getElementById("page3").classList.add("active");
+
+document.getElementById("scoreResult").innerText =
+"Your Score: " + score + "/" + questions.length;
+
+let percent = (score / questions.length) * 100;
+document.getElementById("progress").innerText =
+"Performance: " + percent + "%";
+
+saveOffline();
+sendToGoogleSheet();
+}
+
+function restartQuiz() {
+location.reload();
 }
 
 function startTimer() {
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById("timer").innerText = timeLeft;
+timer = setInterval(() => {
+timeLeft--;
+document.getElementById("timer").innerText = "Time: " + timeLeft;
 
-        if (timeLeft === 0) {
-            showResult();
-        }
-    }, 1000);
+if (timeLeft <= 0) {
+finishQuiz();
+}
+}, 1000);
 }
 
-function saveToLocalStorage() {
-    let name = document.getElementById("studentName").value;
+/* OFFLINE MODE */
+function saveOffline() {
+let data = {
+name: document.getElementById("fullName").value,
+email: document.getElementById("email").value,
+phone: document.getElementById("phone").value,
+score: score
+};
 
-    let result = {
-        name: name,
-        topic: selectedTopic,
-        score: score
-    };
+localStorage.setItem("quizResult", JSON.stringify(data));
+}
 
-    localStorage.setItem("quizResult", JSON.stringify(result));
+/* GOOGLE SHEET CONNECTION */
+function sendToGoogleSheet() {
+fetch("PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE", {
+method: "POST",
+mode: "no-cors",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+name: document.getElementById("fullName").value,
+email: document.getElementById("email").value,
+phone: document.getElementById("phone").value,
+score: score
+})
+});
 }
