@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quizora — Learn. Test. Grow.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-blob bg-blob-1"></div>
+<div class="bg-blob bg-blob-2"></div>
+<div class="bg-blob bg-blob-3"></div>
+
+<div id="app">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Quizora<span>.</span></div>
+    <div class="nav-badge">Beta</div>
+  </nav>
+
+  <!-- AUTH PAGE -->
+  <div id="auth-page" class="page active">
+    <div class="auth-container">
+
+      <!-- Left Panel -->
+      <div class="auth-left">
+        <div class="auth-left-content">
+          <div class="auth-tagline">
+            Learn faster.<br>Test <span class="highlight">smarter.</span>
+          </div>
+          <p class="auth-desc">
+            Adaptive quizzes that match your pace. Track progress, earn streaks, and master any subject.
+          </p>
+        </div>
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-num">12K+</div>
+            <div class="stat-label">Learners</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">98%</div>
+            <div class="stat-label">Pass rate</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">200+</div>
+            <div class="stat-label">Quizzes</div>
+          </div>
+        </div>
+        <div class="floating-card">
+          <div class="dot"></div>
+          42 learners active now
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="auth-right">
+        <h2>Get started</h2>
+        <p class="auth-subtitle">Create an account or sign in to continue</p>
+
+        <div class="tab-toggle">
+          <button class="tab-btn active" id="tab-register" onclick="switchTab('register')">Register</button>
+          <button class="tab-btn" id="tab-login" onclick="switchTab('login')">Sign In</button>
+        </div>
+
+        <div class="offline-note" id="offline-note">
+          ⚠️ No backend connected yet. Add your Google Apps Script URL in script.js to enable saving. Running in demo mode.
+        </div>
+
+        <div class="msg" id="form-msg"></div>
+
+        <!-- Register Form -->
+        <div id="register-form">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="reg-name" placeholder="Ada Lovelace" autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="reg-email" placeholder="ada@example.com" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="reg-phone" placeholder="+234 800 000 0000" autocomplete="tel" />
+          </div>
+          <button class="btn-primary" onclick="handleRegister()">
+            Create Account →
+          </button>
+          <p class="form-note">Your data is stored securely in Google Sheets.</p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form" style="display:none">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="login-email" placeholder="ada@example.com" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="login-phone" placeholder="+234 800 000 0000" autocomplete="tel" />
+          </div>
+          <button class="btn-primary" onclick="handleLogin()">
+            Sign In →
+          </button>
+          <p class="form-note">We'll verify your email + phone to sign you in.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSONS PAGE -->
+  <div id="lessons-page" class="page">
+
+    <div class="lessons-header">
+      <div>
+        <div class="welcome-text" id="welcome-greeting">Welcome back</div>
+        <div class="lessons-title">Your <span>Learning</span> Dashboard</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="user-pill">
+          <div class="avatar" id="user-avatar">A</div>
+          <div class="user-pill-name" id="user-pill-name">Learner</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label">
+        <span>Overall Progress</span>
+        <strong>1 of 6 courses started</strong>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="section-title">Continue Learning</div>
+    <div class="course-grid">
+
+      <div class="course-card card-purple" onclick="openCourse('math')">
+        <div class="course-icon">📐</div>
+        <div class="course-tag">Mathematics</div>
+        <h3>Algebra Fundamentals</h3>
+        <p class="course-desc">Master equations, inequalities, and the foundations of algebraic thinking.</p>
+        <div class="course-meta">
+          <span>⚡ 12 quizzes</span>
+          <span>🕐 2.5 hrs</span>
+        </div>
+      </div>
+
+      <div class="course-card card-teal" onclick="openCourse('science')">
+        <div class="course-icon">🔬</div>
+        <div class="course-tag">Science</div>
+        <h3>Biology Essentials</h3>
+        <p class="course-desc">Explore cells, ecosystems, genetics and the science of living things.</p>
+        <div class="course-meta">
+          <span>⚡ 10 quizzes</span>
+          <span>🕐 3 hrs</span>
+        </div>
+      </div>
+
+      <div class="course-card card-pink" onclick="openCourse('history')">
+        <div class="course-icon">🌍</div>
+        <div class="course-tag">History</div>
+        <h3>World History: Modern Era</h3>
+        <p class="course-desc">From the Industrial Revolution to the 21st century — events that shaped our world.</p>
+        <div class="course-meta">
+          <span>⚡ 8 quizzes</span>
+          <span>🕐 2 hrs</span>
+        </div>
+      </div>
+
+      <div class="course-card card-orange locked" title="Complete Algebra first">
+        <div class="lock-badge">🔒</div>
+        <div class="course-icon">💻</div>
+        <div class="course-tag">Technology</div>
+        <h3>Intro to Programming</h3>
+        <p class="course-desc">Variables, loops, and logic — your first steps in computer science.</p>
+        <div class="course-meta">
+          <span>⚡ 15 quizzes</span>
+          <span>🕐 4 hrs</span>
+        </div>
+      </div>
+
+      <div class="course-card card-purple locked" title="Complete Biology first">
+        <div class="lock-badge">🔒</div>
+        <div class="course-icon">⚗️</div>
+        <div class="course-tag">Science</div>
+        <h3>Chemistry Basics</h3>
+        <p class="course-desc">Atoms, molecules, reactions — the building blocks of matter.</p>
+        <div class="course-meta">
+          <span>⚡ 11 quizzes</span>
+          <span>🕐 3 hrs</span>
+        </div>
+      </div>
+
+      <div class="course-card card-teal locked" title="Complete 3 courses first">
+        <div class="lock-badge">🔒</div>
+        <div class="course-icon">✍️</div>
+        <div class="course-tag">Language</div>
+        <h3>Advanced English Writing</h3>
+        <p class="course-desc">Essays, arguments, and style — write with clarity and impact.</p>
+        <div class="course-meta">
+          <span>⚡ 9 quizzes</span>
+          <span>🕐 2 hrs</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
